@@ -1,0 +1,11 @@
+#include "../include/asset.h"
+
+using namespace std;
+
+Asset::Asset() {
+
+}
+
+Asset::~Asset() {
+
+}

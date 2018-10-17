@@ -1,0 +1,2 @@
+#define zengine_VERSION_MAJOR @zengine_VERSION_MAJOR@
+#define zengine_VERSION_MINOR @zengine_VERSION_MINOR@
