@@ -26,10 +26,12 @@ void Mesh::setLocation(glm::vec3 const& location) {
 
 void Mesh::translate(glm::vec3 const& vector) {
 
+  this->_model = glm::translate(this->_model, vector);
 }
 
 void Mesh::rotate(float const& angle_rad, glm::vec3 const& axis) {
 
+  this->_model = glm::rotate(this->_model, angle_rad, axis);
 
 }
 

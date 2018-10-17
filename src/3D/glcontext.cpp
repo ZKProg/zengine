@@ -80,6 +80,7 @@ bool GLContext::initGL() {
     Plane *plane2 = new Plane(10, 10);
     Plane *plane3 = new Plane(15, 15);
     plane->setLocation(glm::vec3(-3, -1, -3));
+    plane->rotate(glm::radians(45.0f), glm::vec3(1,1,0));
     plane->setAmbient(glm::vec3(0,1,0));
     plane2->setLocation(glm::vec3(0, 1, 0));
     plane3->setLocation(glm::vec3(0.2, 0.5, -0.5));

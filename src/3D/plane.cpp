@@ -30,7 +30,7 @@ void Plane::createGeometry() {
         for (int w = 0; w < this->_w; w++) {
 
             // Dev: Creates a randomly generated noise for height values
-            float height = (rand() % 10) / 120.0f;
+            float height = (rand() % 10) / 20.0f;
 
 
             glm::vec3 temp(
