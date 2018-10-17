@@ -447,6 +447,33 @@ src/3D/shader.cpp.s:
 	$(MAKE) -f CMakeFiles/zengine.dir/build.make CMakeFiles/zengine.dir/src/3D/shader.cpp.s
 .PHONY : src/3D/shader.cpp.s
 
+src/3D/texture.o: src/3D/texture.cpp.o
+
+.PHONY : src/3D/texture.o
+
+# target to build an object file
+src/3D/texture.cpp.o:
+	$(MAKE) -f CMakeFiles/zengine.dir/build.make CMakeFiles/zengine.dir/src/3D/texture.cpp.o
+.PHONY : src/3D/texture.cpp.o
+
+src/3D/texture.i: src/3D/texture.cpp.i
+
+.PHONY : src/3D/texture.i
+
+# target to preprocess a source file
+src/3D/texture.cpp.i:
+	$(MAKE) -f CMakeFiles/zengine.dir/build.make CMakeFiles/zengine.dir/src/3D/texture.cpp.i
+.PHONY : src/3D/texture.cpp.i
+
+src/3D/texture.s: src/3D/texture.cpp.s
+
+.PHONY : src/3D/texture.s
+
+# target to generate assembly for a file
+src/3D/texture.cpp.s:
+	$(MAKE) -f CMakeFiles/zengine.dir/build.make CMakeFiles/zengine.dir/src/3D/texture.cpp.s
+.PHONY : src/3D/texture.cpp.s
+
 src/music.o: src/music.cpp.o
 
 .PHONY : src/music.o
@@ -573,6 +600,9 @@ help:
 	@echo "... src/3D/shader.o"
 	@echo "... src/3D/shader.i"
 	@echo "... src/3D/shader.s"
+	@echo "... src/3D/texture.o"
+	@echo "... src/3D/texture.i"
+	@echo "... src/3D/texture.s"
 	@echo "... src/music.o"
 	@echo "... src/music.i"
 	@echo "... src/music.s"

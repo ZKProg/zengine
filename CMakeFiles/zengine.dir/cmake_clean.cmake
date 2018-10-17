@@ -14,6 +14,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/zengine.dir/src/3D/mesh.cpp.o"
   "CMakeFiles/zengine.dir/src/3D/plane.cpp.o"
   "CMakeFiles/zengine.dir/src/3D/shader.cpp.o"
+  "CMakeFiles/zengine.dir/src/3D/texture.cpp.o"
   "zengine.pdb"
   "zengine"
 )

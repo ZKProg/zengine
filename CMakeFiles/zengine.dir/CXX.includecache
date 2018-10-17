@@ -248,6 +248,22 @@ string
 sstream
 -
 
+/home/john/Programming/cpp/zengine/include/3D/texture.h
+iostream
+-
+vector
+-
+fstream
+-
+GL/glew.h
+-
+GL/gl.h
+-
+SDL2/SDL.h
+-
+SDL2/SDL_image.h
+-
+
 /home/john/Programming/cpp/zengine/include/music.h
 ./sound.h
 /home/john/Programming/cpp/zengine/include/./sound.h
@@ -266,6 +282,8 @@ SDL2/SDL_mixer.h
 iostream
 -
 thread
+-
+SDL2/SDL_image.h
 -
 configure/conf.h
 /home/john/Programming/cpp/zengine/configure/conf.h
@@ -321,6 +339,10 @@ configure/conf.h
 /home/john/Programming/cpp/zengine/src/3D/shader.cpp
 ../../include/3D/shader.h
 /home/john/Programming/cpp/zengine/include/3D/shader.h
+
+/home/john/Programming/cpp/zengine/src/3D/texture.cpp
+../../include/3D/texture.h
+/home/john/Programming/cpp/zengine/include/3D/texture.h
 
 /home/john/Programming/cpp/zengine/src/music.cpp
 ../include/music.h

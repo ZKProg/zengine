@@ -59,6 +59,9 @@ CMakeFiles/zengine.dir/src/3D/plane.cpp.o: src/3D/plane.cpp
 CMakeFiles/zengine.dir/src/3D/shader.cpp.o: include/3D/shader.h
 CMakeFiles/zengine.dir/src/3D/shader.cpp.o: src/3D/shader.cpp
 
+CMakeFiles/zengine.dir/src/3D/texture.cpp.o: include/3D/texture.h
+CMakeFiles/zengine.dir/src/3D/texture.cpp.o: src/3D/texture.cpp
+
 CMakeFiles/zengine.dir/src/music.cpp.o: include/./sound.h
 CMakeFiles/zengine.dir/src/music.cpp.o: include/music.h
 CMakeFiles/zengine.dir/src/music.cpp.o: src/music.cpp
