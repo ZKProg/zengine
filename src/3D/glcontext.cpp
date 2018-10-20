@@ -5,10 +5,15 @@ using namespace std;
 GLContext::GLContext(int w, int h) : 
     _looping(false), _main_surface(nullptr), _main_window(nullptr), _w(w), _h(h)
 {
+    // Camera settings
     this->_camera_location = glm::vec3(2, 2, 2);
-    this->_center_view = glm::vec3(0,0,0);
-    this->_up_vector = glm::vec3(0,1,0);
+    this->_center_camera_view = glm::vec3(0,0,0);
+    this->_up_camera_vector = glm::vec3(0,1,0);
     this->_fov = 60.0f;
+    this->_horizontal_camera_vector = glm::normalize( glm::cross(
+        this->_center_camera_view - this->_camera_location,
+        this->_up_camera_vector
+    ));
 
     try {
         if (!this->initGL()) throw "Window initializing failed.";
@@ -72,8 +77,8 @@ bool GLContext::initGL() {
     // Linear algebra
      _camera = glm::lookAt(
         this->_camera_location,
-        this->_center_view,
-        this->_up_vector
+        this->_center_camera_view,
+        this->_up_camera_vector
     );
 
     _projection = glm::perspectiveFov(glm::radians(this->_fov), (float)800, (float)600, 0.1f, 1000.0f);    
@@ -135,8 +140,13 @@ void GLContext::mainLoop() {
 
     this->_looping = true;
     static float rotation = 0.0f;
-
+    float mouse_pressed = false;
+    int mouse_x(0), mouse_y(0), old_mouse_x(0), old_mouse_y(0);
+    glm::vec4 h4 = glm::vec4(this->_horizontal_camera_vector.x, this->_horizontal_camera_vector.y, this->_horizontal_camera_vector.z, 1.0f);
+    
     while (this->_looping) {
+
+      SDL_GetMouseState(&mouse_x, &mouse_y);
 
         while (SDL_PollEvent(&_event) > 0) {
 
@@ -144,6 +154,9 @@ void GLContext::mainLoop() {
                 this->_looping = false;
             }
 
+            /********************************************************************************
+             * KEYBOARD EVENTS
+             */
             if (_event.type == SDL_KEYDOWN) {
 
                 switch(_event.key.keysym.sym) {
@@ -157,16 +170,20 @@ void GLContext::mainLoop() {
                         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                         break;
                     case SDLK_LEFT:
-                        this->_camera = glm::rotate(this->_camera, glm::radians(1.0f), this->_up_vector);
+                        h4 = h4 * glm::rotate(glm::mat4(1.0f), glm::radians(1.0f), this->_up_camera_vector);
+                        this->_horizontal_camera_vector = glm::vec3(h4.x, h4.y, h4.z);
+                        this->_camera = glm::rotate(this->_camera, glm::radians(1.0f), this->_up_camera_vector);
                         break;
                     case SDLK_RIGHT:
-                        this->_camera = glm::rotate(this->_camera, glm::radians(-1.0f), this->_up_vector);
+                        h4 = h4 * glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), this->_up_camera_vector);
+                        this->_horizontal_camera_vector = glm::vec3(h4.x, h4.y, h4.z);
+                        this->_camera = glm::rotate(this->_camera, glm::radians(-1.0f), this->_up_camera_vector);
                         break;
-                    case SDLK_UP:
-                        this->_camera = glm::rotate(this->_camera, glm::radians(1.0f), this->_up_vector);
+                    case SDLK_UP:                       
+                        this->_camera = glm::rotate(this->_camera, glm::radians(1.0f), this->_horizontal_camera_vector);
                         break;
                     case SDLK_DOWN:
-                        this->_camera = glm::rotate(this->_camera, glm::radians(-1.0f), this->_up_vector);
+                        this->_camera = glm::rotate(this->_camera, glm::radians(-1.0f), this->_horizontal_camera_vector);
                         break;
                     case SDLK_F11:
                         SDL_SetWindowFullscreen(this->_main_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
@@ -179,7 +196,32 @@ void GLContext::mainLoop() {
                 }
             }
 
+	    /********************************************************************************
+	     * MOUSE EVENTS
+	     */
+	    if (_event.type == SDL_MOUSEBUTTONDOWN) {
+	      mouse_pressed = true;
+	      SDL_GetMouseState(&old_mouse_x, &old_mouse_y);
+	    }
 
+	    if (_event.type == SDL_MOUSEBUTTONUP) 
+	      mouse_pressed = false;
+	      
+	   
+	    if (_event.type == SDL_MOUSEMOTION && mouse_pressed) {
+	      
+	      int deltax = mouse_x - old_mouse_x;
+	      int deltay = mouse_y - old_mouse_y;
+
+	      h4 = h4 * glm::rotate(glm::mat4(1.0f), glm::radians(static_cast<float>(deltax / 10.0f)), this->_up_camera_vector);
+	      this->_horizontal_camera_vector = glm::vec3(h4.x, h4.y, h4.z);
+	      this->_camera = glm::rotate(this->_camera, glm::radians(static_cast<float>(deltax / 10.0f)), this->_up_camera_vector);
+	      this->_camera = glm::rotate(this->_camera, glm::radians(static_cast<float>(deltay / 10.0f)), this->_horizontal_camera_vector);
+
+	      old_mouse_x = mouse_x; old_mouse_y = mouse_y;
+	      
+	    }
+	    
         }
 
         if (SDL_GetTicks() - old_time > 80) {
@@ -188,7 +230,6 @@ void GLContext::mainLoop() {
         }
         
     }
-
 }
 
 glm::mat4 GLContext::getMVP() {
