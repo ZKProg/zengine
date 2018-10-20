@@ -35,6 +35,7 @@ if (UNIX)
     GL
     GLEW
     pthread
+    assimp
     )
   
 endif()

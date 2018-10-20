@@ -3,7 +3,7 @@
 using namespace std;
 
 FontTexture::FontTexture(SDL_Renderer *renderer, string const& path) :
-  Texture(renderer), _font(0)
+  Texture2D(renderer), _font(0)
 {
   TTF_Init();
 }

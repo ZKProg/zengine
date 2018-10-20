@@ -1,8 +1,8 @@
-#include "../../include/2D/texture.h"
+#include "../../include/2D/texture2D.h"
 
 using namespace std;
 
-Texture::Texture(SDL_Renderer *renderer, string const& path) :
+Texture2D::Texture2D(SDL_Renderer *renderer, string const& path) :
   _texture(0), _renderer(0), _w(0), _h(0)
   {
   this->_renderer = renderer;
@@ -17,11 +17,11 @@ Texture::Texture(SDL_Renderer *renderer, string const& path) :
   }
 }
 
-Texture::~Texture() {
+Texture2D::~Texture2D() {
   SDL_DestroyTexture(this->_texture);
 }
 
-bool Texture::loadFromFile(string const& path) {
+bool Texture2D::loadFromFile(string const& path) {
 
   SDL_Surface *surface = NULL;
   surface = IMG_Load(path.c_str());
@@ -49,14 +49,14 @@ bool Texture::loadFromFile(string const& path) {
   return true;
 }
 
-SDL_Texture *Texture::getLoadedTexture() {
+SDL_Texture *Texture2D::getLoadedTexture() {
   return this->_texture;
 }
 
-int Texture::getWidth() {
+int Texture2D::getWidth() {
   return this->_w;
 }
 
-int Texture::getHeight() {
+int Texture2D::getHeight() {
   return this->_h;
 }
