@@ -6,6 +6,9 @@ GLContext::GLContext(int w, int h) :
     _looping(false), _main_surface(nullptr), _main_window(nullptr), _w(w), _h(h)
 {
     this->_camera_location = glm::vec3(2, 2, 2);
+    this->_center_view = glm::vec3(0,0,0);
+    this->_up_vector = glm::vec3(0,1,0);
+    this->_fov = 60.0f;
 
     try {
         if (!this->initGL()) throw "Window initializing failed.";
@@ -69,11 +72,11 @@ bool GLContext::initGL() {
     // Linear algebra
      _camera = glm::lookAt(
         this->_camera_location,
-        glm::vec3(0, 0, 0),
-        glm::vec3(0, 1, 0)
+        this->_center_view,
+        this->_up_vector
     );
 
-    _projection = glm::perspectiveFov(glm::radians(60.0f), (float)800, (float)600, 0.1f, 1000.0f);    
+    _projection = glm::perspectiveFov(glm::radians(this->_fov), (float)800, (float)600, 0.1f, 1000.0f);    
 
     // Init meshes to display here
     Plane *plane = new Plane(50, 50);
@@ -152,16 +155,16 @@ void GLContext::mainLoop() {
                         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                         break;
                     case SDLK_LEFT:
-                        this->_camera = glm::rotate(this->_camera, glm::radians(1.0f), glm::vec3(0,1,0));
+                        this->_camera = glm::rotate(this->_camera, glm::radians(1.0f), this->_up_vector);
                         break;
                     case SDLK_RIGHT:
-                        this->_camera = glm::rotate(this->_camera, glm::radians(-1.0f), glm::vec3(0,1,0));
+                        this->_camera = glm::rotate(this->_camera, glm::radians(-1.0f), this->_up_vector);
                         break;
                     case SDLK_UP:
-                        this->_camera = glm::rotate(this->_camera, glm::radians(1.0f), glm::vec3(1,0,0));
+                        this->_camera = glm::rotate(this->_camera, glm::radians(1.0f), this->_up_vector);
                         break;
                     case SDLK_DOWN:
-                        this->_camera = glm::rotate(this->_camera, glm::radians(-1.0f), glm::vec3(1,0,0));
+                        this->_camera = glm::rotate(this->_camera, glm::radians(-1.0f), this->_up_vector);
                         break;
                     case SDLK_F11:
                         SDL_SetWindowFullscreen(this->_main_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
