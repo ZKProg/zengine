@@ -1,5 +1,5 @@
-#ifndef TEXTURE_H
-#define TEXTURE_H
+#ifndef Texture2D_H
+#define Texture2D_H
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -7,12 +7,12 @@
 #include <iostream>
 #include <string>
 
-class Texture {
+class Texture2D {
 
  public:
 
-  Texture(SDL_Renderer *renderer, std::string const& path = "");
-  ~Texture();
+  Texture2D(SDL_Renderer *renderer, std::string const& path = "");
+  ~Texture2D();
 
   virtual bool loadFromFile(std::string const& path);
   SDL_Texture *getLoadedTexture();
@@ -29,4 +29,4 @@ class Texture {
   
 };
 
-#endif // TEXTURE_H
+#endif // Texture2D_H

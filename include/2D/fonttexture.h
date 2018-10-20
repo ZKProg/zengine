@@ -3,9 +3,9 @@
 
 #include <SDL2/SDL_ttf.h>
 
-#include "texture.h"
+#include "texture2D.h"
 
-class FontTexture : public Texture {
+class FontTexture : public Texture2D {
 
 public:
 

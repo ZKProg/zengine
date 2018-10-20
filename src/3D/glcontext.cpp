@@ -91,6 +91,8 @@ bool GLContext::initGL() {
     _planes.push_back(plane);
     _planes.push_back(plane2);
     _planes.push_back(plane3);
+
+    Model model;
     
 
     // First pass
