@@ -14,6 +14,7 @@ GLContext::GLContext(int w, int h) :
         this->_center_camera_view - this->_camera_location,
         this->_up_camera_vector
     ));
+    this->_eye_direction = this->_center_camera_view - this->_camera_location;
 
     try {
         if (!this->initGL()) throw "Window initializing failed.";
@@ -72,7 +73,8 @@ bool GLContext::initGL() {
     }
 
     glEnable(GL_DEPTH_TEST);
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glCreateVertexArrays(1, &this->_vao);
+    glBindVertexArray(this->_vao);
 
     // Linear algebra
      _camera = glm::lookAt(
@@ -81,14 +83,14 @@ bool GLContext::initGL() {
         this->_up_camera_vector
     );
 
-    _projection = glm::perspectiveFov(glm::radians(this->_fov), (float)800, (float)600, 0.1f, 1000.0f);    
+    _projection = glm::perspectiveFov(glm::radians(this->_fov), (float)this->_w, (float)this->_h, 0.1f, 1000.0f);    
 
     // Init meshes to display here
     Plane *plane = new Plane(50, 50);
     Plane *plane2 = new Plane(10, 10);
     Plane *plane3 = new Plane(15, 15);
     plane->setLocation(glm::vec3(-3, -1, -3));
-    plane->rotate(glm::radians(45.0f), glm::vec3(1,1,0));
+    plane->rotate(glm::radians(0.0f), glm::vec3(1,1,0));
     plane->setAmbient(glm::vec3(0,1,0));
     plane2->setLocation(glm::vec3(0, 1, 0));
     plane3->setLocation(glm::vec3(0.2, 0.5, -0.5));
@@ -159,43 +161,59 @@ void GLContext::mainLoop() {
              */
             if (_event.type == SDL_KEYDOWN) {
 
-                switch(_event.key.keysym.sym) {
-                    case SDLK_ESCAPE:
-                        this->_looping = false;
-                        break;
-                    case SDLK_f:
-                        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                        break;
-                    case SDLK_w:
-                        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                        break;
-                    case SDLK_LEFT:
-                        h4 = h4 * glm::rotate(glm::mat4(1.0f), glm::radians(1.0f), this->_up_camera_vector);
-                        this->_horizontal_camera_vector = glm::vec3(h4.x, h4.y, h4.z);
-                        this->_camera = glm::rotate(this->_camera, glm::radians(1.0f), this->_up_camera_vector);
-                        break;
-                    case SDLK_RIGHT:
-                        h4 = h4 * glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), this->_up_camera_vector);
-                        this->_horizontal_camera_vector = glm::vec3(h4.x, h4.y, h4.z);
-                        this->_camera = glm::rotate(this->_camera, glm::radians(-1.0f), this->_up_camera_vector);
-                        break;
-                    case SDLK_UP:                       
-                        this->_camera = glm::rotate(this->_camera, glm::radians(1.0f), this->_horizontal_camera_vector);
-                        break;
-                    case SDLK_DOWN:
-                        this->_camera = glm::rotate(this->_camera, glm::radians(-1.0f), this->_horizontal_camera_vector);
-                        break;
-                    case SDLK_F11:
-                        SDL_SetWindowFullscreen(this->_main_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-                        glViewport(0, 0, 1920, 1080);
-                        this->paintGL();
-                        break;
-                    case SDLK_F12:
-                        SDL_SetWindowFullscreen(this->_main_window, 0);
-                        break;
-                }
+	      switch(_event.key.keysym.sym) {
+	      case SDLK_ESCAPE:
+		this->_looping = false;
+		break;
+	      case SDLK_i:
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		break;
+	      case SDLK_o:
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		break;
+	      case SDLK_LEFT:
+		h4 = h4 * glm::rotate(glm::mat4(1.0f), glm::radians(1.0f), this->_up_camera_vector);
+		this->_horizontal_camera_vector = glm::vec3(h4.x, h4.y, h4.z);
+		this->_camera = glm::rotate(this->_camera, glm::radians(1.0f), this->_up_camera_vector);
+		break;
+	      case SDLK_RIGHT:
+		h4 = h4 * glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), this->_up_camera_vector);
+		this->_horizontal_camera_vector = glm::vec3(h4.x, h4.y, h4.z);
+		this->_camera = glm::rotate(this->_camera, glm::radians(-1.0f), this->_up_camera_vector);
+		break;
+	      case SDLK_UP:                       
+		this->_camera = glm::rotate(this->_camera, glm::radians(1.0f), this->_horizontal_camera_vector);
+		break;
+	      case SDLK_DOWN:
+		this->_camera = glm::rotate(this->_camera, glm::radians(-1.0f), this->_horizontal_camera_vector);
+		break;
+	      case SDLK_F11:
+		SDL_SetWindowFullscreen(this->_main_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		this->_w = 1920; this->_h = 1080;
+		_projection = glm::perspectiveFov(glm::radians(this->_fov), (float)this->_w, (float)this->_h, 0.1f, 1000.0f);    
+		glViewport(0, 0, 1920, 1080);
+		this->paintGL();
+		break;
+	      case SDLK_F12:
+		SDL_SetWindowFullscreen(this->_main_window, 0);
+		_projection = glm::perspectiveFov(glm::radians(this->_fov), (float)this->_w, (float)this->_h, 0.1f, 1000.0f);    
+		glViewport(0, 0, 800, 600);
+		break;
+	      case SDLK_w:
+		this->_camera = glm::translate(this->_camera, glm::vec3(-this->_eye_direction) / 50.0f);
+		break;
+	      case SDLK_s:
+		this->_camera = glm::translate(this->_camera, glm::vec3(this->_eye_direction) / 50.0f);
+		break;
+	      case SDLK_a:
+		this->_camera = glm::translate(this->_camera, glm::vec3(this->_horizontal_camera_vector) / 50.0f);
+		break;
+	      case SDLK_d:
+		this->_camera = glm::translate(this->_camera, glm::vec3(-this->_horizontal_camera_vector) / 50.0f);
+		break;
+	      }
             }
-
+	    
 	    /********************************************************************************
 	     * MOUSE EVENTS
 	     */
@@ -207,7 +225,12 @@ void GLContext::mainLoop() {
 	    if (_event.type == SDL_MOUSEBUTTONUP) 
 	      mouse_pressed = false;
 	      
-	   
+	    if (_event.type == SDL_MOUSEWHEEL) {
+	      _projection = glm::perspectiveFov(glm::radians(this->_fov), (float)this->_w, (float)this->_h, 0.1f, 1000.0f);    
+	      if (_event.wheel.y < 0) this->_fov += 0.5f;
+	      if (_event.wheel.y > 0) this->_fov -= 0.5f;
+	    }
+	    
 	    if (_event.type == SDL_MOUSEMOTION && mouse_pressed) {
 	      
 	      int deltax = mouse_x - old_mouse_x;
@@ -217,6 +240,11 @@ void GLContext::mainLoop() {
 	      this->_horizontal_camera_vector = glm::vec3(h4.x, h4.y, h4.z);
 	      this->_camera = glm::rotate(this->_camera, glm::radians(static_cast<float>(deltax / 10.0f)), this->_up_camera_vector);
 	      this->_camera = glm::rotate(this->_camera, glm::radians(static_cast<float>(deltay / 10.0f)), this->_horizontal_camera_vector);
+
+	      glm::vec4 eye4 = glm::vec4(this->_eye_direction.x, this->_eye_direction.y, this->_eye_direction.z, 1.0f);
+	      eye4 = eye4 * glm::rotate(glm::mat4(1.0f), glm::radians(deltax / 10.0f), this->_up_camera_vector);
+	      eye4 = eye4 * glm::rotate(glm::mat4(1.0f), glm::radians(deltay / 10.0f), this->_horizontal_camera_vector);
+	      this->_eye_direction = glm::vec3(eye4.x, eye4.y, eye4.z);
 
 	      old_mouse_x = mouse_x; old_mouse_y = mouse_y;
 	      

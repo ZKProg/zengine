@@ -35,13 +35,13 @@ protected:
     SDL_GLContext _gl_context;
     SDL_Event _event;
     int _w, _h;
+    GLuint _vao;
 
     float _fov;
     glm::mat4 _camera, _projection, _VP;
     glm::vec3 _camera_location, _center_camera_view, _up_camera_vector;
-    glm::vec3 _horizontal_camera_vector;
+    glm::vec3 _horizontal_camera_vector, _eye_direction;
     std::vector<Plane*> _planes;
-
 
 };
 

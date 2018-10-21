@@ -42,7 +42,7 @@ protected:
 
     std::vector<glm::vec3> _vertex_bag, _vertices, _normals;
     GLuint _program_id;
-    GLuint _vbo, _nbo;
+    GLuint _vbo, _nbo, _ebo;
     Shader *_shader;
 
     glm::mat4 _model;

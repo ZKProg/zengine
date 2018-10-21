@@ -12,14 +12,16 @@
 class Model : public Mesh {
 
 public:
-    Model();
-    virtual ~Model();
+  Model();
+  virtual ~Model();
+
+  virtual void createGeometry();
 
 protected:
 
-    const aiScene *_scene;
-    std::vector<Mesh> _meshes;
-    Assimp::Importer _importer;
+  const aiScene *_scene;
+  std::vector<Mesh> _meshes;
+  Assimp::Importer _importer;
 
 
 };

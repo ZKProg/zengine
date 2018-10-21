@@ -4,6 +4,10 @@ using namespace std;
 
 Mesh::Mesh() : _shader(0) { 
 
+  glCreateBuffers(1, &_vbo);
+  glCreateBuffers(1, &_nbo);
+  glCreateBuffers(1, &_ebo);
+  
 }
 
 Mesh::Mesh(Mesh const& mesh) : _shader(0) {

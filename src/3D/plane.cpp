@@ -13,9 +13,6 @@ Plane::Plane(float w, float h, float step) :
     this->_shader = new Shader("./shaders/plane.vert", "./shaders/plane.frag");
     this->_program_id = this->_shader->getProgramID();
 
-    glCreateBuffers(1, &_vbo);
-    glCreateBuffers(1, &_nbo);
-
 }
 
 Plane::~Plane() {
