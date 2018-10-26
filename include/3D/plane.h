@@ -1,20 +1,7 @@
 #ifndef PLANE_H
 #define PLANE_H
 
-#include <GL/glew.h>
-#include <GL/gl.h>
-#include <SDL2/SDL.h>
-
-#include <iostream>
-#include <vector>
-#include <ctime>
-#include <cstdlib>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
 #include "mesh.h"
-#include "shader.h"
 
 class Plane : public Mesh {
 

@@ -11,8 +11,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "model.h"
 #include "plane.h"
+#include "model.h"
 
 class GLContext {
 
@@ -41,7 +41,8 @@ protected:
     glm::mat4 _camera, _projection, _VP;
     glm::vec3 _camera_location, _center_camera_view, _up_camera_vector;
     glm::vec3 _horizontal_camera_vector, _eye_direction;
-    std::vector<Plane*> _planes;
+    std::vector<Mesh*> _planes;
+    std::vector<Model*> *_models;
 
 };
 

@@ -23,6 +23,7 @@ void Plane::createGeometry() {
 
     srand(time(0));
 
+    // Generates the vertices 
     for (int h = 0; h < this->_h; h++) {
         for (int w = 0; w < this->_w; w++) {
 
@@ -44,6 +45,7 @@ void Plane::createGeometry() {
     int squares_along_width = this->_w - 1;
     int squares_along_height = this->_h - 1;
 
+    // Duplicate the vertices to create a flat shaded surface
     for (int h = 0; h < squares_along_height; h++) {
         for (int w = 0; w < squares_along_width; w++) {
 
@@ -83,11 +85,6 @@ void Plane::createGeometry() {
 
     }
 
-    glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->_vertices.size() * 3, reinterpret_cast<GLfloat*>(this->_vertices.data()), GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ARRAY_BUFFER, _nbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->_normals.size() * 3, reinterpret_cast<GLfloat*>(this->_normals.data()), GL_STATIC_DRAW);
-
+    this->initBufferData();
 }
 

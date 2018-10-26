@@ -80,8 +80,6 @@ Shader::~Shader() {
 }
 
 bool Shader::compileVertex() {
-
-  cout << "Compiling Vertex shader..." << endl;
   
   GLint result = GL_FALSE;
   int log_length;
@@ -106,8 +104,6 @@ bool Shader::compileVertex() {
 }
 
 bool Shader::compileFragment() {
-
-  cout << "Compiling Fragment shader..." << endl;
   
   GLint result = GL_FALSE;
   int log_length;

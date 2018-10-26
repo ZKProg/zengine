@@ -2,11 +2,21 @@
 
 using namespace std;
 
-Mesh::Mesh() : _shader(0) { 
+Mesh::Mesh() : _shader(0), _parent_node(0) { 
 
-  glCreateBuffers(1, &_vbo);
-  glCreateBuffers(1, &_nbo);
-  glCreateBuffers(1, &_ebo);
+  this->_model = glm::mat4(1.0f);
+  this->createBuffers();
+  
+}
+
+Mesh::Mesh(aiMesh *mesh, aiMesh *parent_node) :
+  _shader(0), _parent_node(0)
+{
+
+  this->_parent_node = parent_node;
+  this->_model = glm::mat4(1.0f);
+  this->createBuffers();
+
   
 }
 
@@ -15,6 +25,16 @@ Mesh::Mesh(Mesh const& mesh) : _shader(0) {
 }
 
 Mesh::~Mesh() {
+
+  delete this->_shader;
+  
+}
+
+void Mesh::createBuffers() {
+
+  glCreateBuffers(1, &_vbo);
+  glCreateBuffers(1, &_nbo);
+  glCreateBuffers(1, &_ebo);
 
 }
 
@@ -40,45 +60,95 @@ void Mesh::rotate(float const& angle_rad, glm::vec3 const& axis) {
 }
 
 void Mesh::setAmbient(glm::vec3 const& ambient) {
-    this->_ambient = ambient;
+  this->_ambient = ambient;
 }
 
-void Mesh::render(glm::mat4 const &VP, int tick, glm::vec3 const& camera_location) {
+void Mesh::render(glm::mat4 const &VP, int tick, glm::vec3 const& camera_location, bool draw_elements) {
 
-    // Rendering function
-        glm::mat4 _VP = VP * this->_model;
+  // Rendering function
+  glm::mat4 _VP = VP * this->_model;
 
-    glUseProgram(this->_program_id);
+  glUseProgram(this->_program_id);
 
-    GLint hookMVP = glGetUniformLocation(this->_program_id, "MVP");
-    GLint hookTIME = glGetUniformLocation(this->_program_id, "time");
-    GLint hookAMBIENT = glGetUniformLocation(this->_program_id, "ambient");
-    GLint hookCAMERA = glGetUniformLocation(this->_program_id, "camera");
+  GLint hookMVP = glGetUniformLocation(this->_program_id, "MVP");
+  GLint hookTIME = glGetUniformLocation(this->_program_id, "time");
+  GLint hookAMBIENT = glGetUniformLocation(this->_program_id, "ambient");
+  GLint hookCAMERA = glGetUniformLocation(this->_program_id, "camera");
+  
+  glUniformMatrix4fv(hookMVP, 1, GL_FALSE, reinterpret_cast<GLfloat*>(&_VP[0][0]));
+  glUniform1f(hookTIME, (float)tick);
+  glUniform3fv(hookAMBIENT, 1, reinterpret_cast<const GLfloat*>(&this->_ambient[0]));
+  glUniform3fv(hookCAMERA, 1, reinterpret_cast<const GLfloat*>(&camera_location[0]));
+
+  glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
+
+  glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+  glBindBuffer(GL_ARRAY_BUFFER, _nbo);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+  if (draw_elements) {
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+    glDrawElements(GL_TRIANGLES, this->_elements.size() * 3, GL_UNSIGNED_INT, (void*)0);
     
-    glUniformMatrix4fv(hookMVP, 1, GL_FALSE, reinterpret_cast<GLfloat*>(&_VP[0][0]));
-    glUniform1f(hookTIME, (float)tick);
-    glUniform3fv(hookAMBIENT, 1, reinterpret_cast<const GLfloat*>(&this->_ambient[0]));
-    glUniform3fv(hookCAMERA, 1, reinterpret_cast<const GLfloat*>(&camera_location[0]));
-
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-
-    glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, _nbo);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
+  } else {
+    
     glDrawArrays(GL_TRIANGLES, 0, this->_vertices.size() * 3);
 
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glUseProgram(0);
+  }
+
+  
+
+  glDisableVertexAttribArray(0);
+  glDisableVertexAttribArray(1);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glUseProgram(0);
 
 
 }
 
 vector<glm::vec3> Mesh::getVertices() {
-    return this->_vertices;
+  return this->_vertices;
 }
+
+vector<unsigned int> Mesh::getElements() {
+  return this->_elements;
+}
+
+void Mesh::setVertices(std::vector<glm::vec3> vertices) {
+  this->_vertices = vertices;
+}
+
+void Mesh::setNormals(std::vector<glm::vec3> normals) {
+  this->_normals = normals;
+}
+
+void Mesh::setElements(std::vector<unsigned int> elements) {
+ 
+  this->_elements = elements;
+ 
+}
+
+void Mesh::setShaders(const char *vertex, const char* fragment) {
+
+  if (this->_shader != nullptr) delete this->_shader;
+
+  this->_shader = new Shader(vertex, fragment);
+  this->_program_id = this->_shader->getProgramID();
+}
+
+void Mesh::initBufferData() {
+
+  glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->_vertices.size() * 3, reinterpret_cast<GLfloat*>(this->_vertices.data()), GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ARRAY_BUFFER, _nbo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->_normals.size() * 3, reinterpret_cast<GLfloat*>(this->_normals.data()), GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * this->_elements.size(), reinterpret_cast<GLfloat*>(this->_elements.data()), GL_STATIC_DRAW);
+}
+
