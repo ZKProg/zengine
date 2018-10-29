@@ -9,8 +9,8 @@ Shader::Shader(const char* vertex, const char* fragment) {
   ////////////////////////////////////////////////////////////////////////////////
   // GL
 
-  _vertexID = glCreateShader(GL_VERTEX_SHADER);
-  _fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
+  _vertex_id = glCreateShader(GL_VERTEX_SHADER);
+  _fragment_id = glCreateShader(GL_FRAGMENT_SHADER);
 
   
   ////////////////////////////////////////////////////////////////////////////////
@@ -44,27 +44,27 @@ Shader::Shader(const char* vertex, const char* fragment) {
 
   ////////////////////////////////////////////////////////////////////////////////
   // PROGRAM
-  this->_programID = glCreateProgram();
+  this->_program_id = glCreateProgram();
   
   
   if (this->compileVertex() && this->compileFragment()) {
 
-    glAttachShader(this->_programID, this->_vertexID);
-    glAttachShader(this->_programID, this->_fragmentID);
+    glAttachShader(this->_program_id, this->_vertex_id);
+    glAttachShader(this->_program_id, this->_fragment_id);
 
   }
 
-  glLinkProgram(this->_programID);
+  glLinkProgram(this->_program_id);
   GLint resultLink = GL_FALSE;
   int sizeLog;
   
-  glGetProgramiv(this->_programID, GL_LINK_STATUS, &resultLink);
-  glGetProgramiv(this->_programID, GL_INFO_LOG_LENGTH, &sizeLog);
+  glGetProgramiv(this->_program_id, GL_LINK_STATUS, &resultLink);
+  glGetProgramiv(this->_program_id, GL_INFO_LOG_LENGTH, &sizeLog);
 
   char log[sizeLog+1];
 
   if (sizeLog > 0) {
-    glGetProgramInfoLog(this->_programID, sizeLog, NULL, log);
+    glGetProgramInfoLog(this->_program_id, sizeLog, NULL, log);
     cout << log << endl;
   }
   
@@ -85,15 +85,15 @@ bool Shader::compileVertex() {
   int log_length;
 
   const char *vertex_code = _vertex_code.c_str();
-  glShaderSource(_vertexID, 1, &vertex_code, NULL);
-  glCompileShader(_vertexID);
+  glShaderSource(_vertex_id, 1, &vertex_code, NULL);
+  glCompileShader(_vertex_id);
 
-  glGetShaderiv(_vertexID, GL_COMPILE_STATUS, &result);
-  glGetShaderiv(_vertexID, GL_INFO_LOG_LENGTH, &log_length);
+  glGetShaderiv(_vertex_id, GL_COMPILE_STATUS, &result);
+  glGetShaderiv(_vertex_id, GL_INFO_LOG_LENGTH, &log_length);
 
   if (log_length > 0) {
     char log[log_length+1];
-    glGetShaderInfoLog(_vertexID, log_length, NULL, log);
+    glGetShaderInfoLog(_vertex_id, log_length, NULL, log);
     cout << "*----------------------------------------*" << endl;
     cout << log << endl;
   }
@@ -109,15 +109,15 @@ bool Shader::compileFragment() {
   int log_length;
 
   const char *fragment_code = _fragment_code.c_str();
-  glShaderSource(_fragmentID, 1, &fragment_code, NULL);
-  glCompileShader(_fragmentID);
+  glShaderSource(_fragment_id, 1, &fragment_code, NULL);
+  glCompileShader(_fragment_id);
 
-  glGetShaderiv(_fragmentID, GL_COMPILE_STATUS, &result);
-  glGetShaderiv(_fragmentID, GL_INFO_LOG_LENGTH, &log_length);
-
+  glGetShaderiv(_fragment_id, GL_COMPILE_STATUS, &result);
+  glGetShaderiv(_fragment_id, GL_INFO_LOG_LENGTH, &log_length);
+  
   if (log_length > 0) {
     char log[log_length+1];
-    glGetShaderInfoLog(_fragmentID, log_length, NULL, log);
+    glGetShaderInfoLog(_fragment_id, log_length, NULL, log);
     cout << "*----------------------------------------*" << endl;
     cout << log << endl;
   }
@@ -128,5 +128,5 @@ bool Shader::compileFragment() {
 }
 
 GLint Shader::getProgramID() {
-  return this->_programID;
+  return this->_program_id;
 }

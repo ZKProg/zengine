@@ -3,12 +3,13 @@
 using namespace std;
 
 GLContext::GLContext(int w, int h) : 
-  _looping(false), _main_surface(nullptr), _main_window(nullptr), _w(w), _h(h)
+  _looping(false), _main_surface(nullptr), _main_window(nullptr), _w(w), _h(h), _meshes(0)
 {
-  this->_models = new vector<Model*>;
+
+  this->_meshes = new vector<ObjModel*>;
   // Camera settings
-  this->_camera_location = glm::vec3(10, 10, 10);
-  this->_center_camera_view = glm::vec3(0,8,0);
+  this->_camera_location = glm::vec3(2, 2, 2);
+  this->_center_camera_view = glm::vec3(0,0,0);
   this->_up_camera_vector = glm::vec3(0,1,0);
   this->_fov = 60.0f;
   this->_horizontal_camera_vector = glm::normalize( glm::cross(
@@ -85,29 +86,17 @@ bool GLContext::initGL() {
 			this->_up_camera_vector
 			);
 
-  _projection = glm::perspectiveFov(glm::radians(this->_fov), (float)this->_w, (float)this->_h, 0.1f, 1000.0f);    
+  _projection = glm::perspectiveFov(glm::radians(this->_fov), (float)this->_w, (float)this->_h, 0.1f, 1000.0f);
 
-  // Init meshes to display here
-  // Plane *plane = new Plane(50, 50);
-  // Plane *plane2 = new Plane(10, 10);
-  // Plane *plane3 = new Plane(15, 15);
-  // plane->setLocation(glm::vec3(-3, -1, -3));
-  // plane->rotate(glm::radians(0.0f), glm::vec3(1,1,0));
-  // plane->setAmbient(glm::vec3(0,1,0));
-  // plane2->setLocation(glm::vec3(0, 1, 0));
-  // plane3->setLocation(glm::vec3(0.2, 0.5, -0.5));
-  // plane3->setAmbient(glm::vec3(0, 0, 1));
-  // plane->createGeometry();
-  // plane2->createGeometry();
-  // plane3->createGeometry();
-  // _planes.push_back(plane);
-  // _planes.push_back(plane2);
-  // _planes.push_back(plane3);
+  // ********************************************************************************
+  // DECLARE ASSETS (MESHES) HERE
 
-  Model *model = new Model("models/scene.fbx");
-  this->_models->push_back(model);
-    
-  // First pass
+  ObjModel *cube = new ObjModel("models/cube.obj");
+  cout << "Cube = " << &cube << endl;
+  this->_meshes->push_back(cube);
+
+  
+  // First rendering pass
   this->paintGL();
   return true;
 }
@@ -118,23 +107,16 @@ void GLContext::paintGL() {
   glClearColor(0.1, 0.1, 0.1, 1.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  // Render all meshes here
-   
+  // Render all meshes here  
   try {
 
     // Set the VP matrix
     this->_VP = this->_projection * this->_camera;
 
     // Render all assets
-    for (int i = 0; i < _planes.size(); i++) 
-      _planes.at(i)->render(_VP, SDL_GetTicks(), this->_camera_location, false);
+    for (int i = 0; i < _meshes->size(); i++) 
+      _meshes->at(i)->render(_VP, SDL_GetTicks(), this->_camera_location, true);
     
-    for (int i = 0; i < this->_models->size(); i++) {
-      
-      this->_models->at(i)->render(_VP, SDL_GetTicks(), this->_camera_location);
-
-    }
-
         
   } catch (exception e) {
     cout << "Error render assets: " << e.what() << endl;

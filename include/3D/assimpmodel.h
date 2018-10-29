@@ -3,12 +3,12 @@
 
 #include "mesh.h"
 
-class Model {
+class AssimpModel {
 
 public:
 
-  Model(const char *path_to_model);
-  virtual ~Model();
+  AssimpModel(const char *path_to_model);
+  virtual ~AssimpModel();
 
   void render(const glm::mat4 &VP, int tick, const glm::vec3 &camera_location);
   

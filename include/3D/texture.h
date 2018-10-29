@@ -30,4 +30,4 @@ protected:
 
 
 
-#endif TEXTURE_H
+#endif // TEXTURE_H

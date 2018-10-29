@@ -22,7 +22,7 @@ public:
 
 protected:
 
-  GLint _vertexID, _fragmentID, _programID;
+  GLint _vertex_id, _fragment_id,  _program_id;
   std::string _vertex_code, _fragment_code;
   std::ifstream _vertex_stream, _fragment_stream;
 

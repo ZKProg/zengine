@@ -1,4 +1,4 @@
-#ifndef MESH_H
+ #ifndef MESH_H
 #define MESH_H
 
 #include <GL/glew.h>
@@ -19,6 +19,7 @@
 #include <assimp/scene.h>
 
 #include "shader.h"
+#include "texture.h"
 
 class Mesh {
 
@@ -29,8 +30,8 @@ public:
   virtual ~Mesh();
 
   virtual void createGeometry();
-
   virtual void setLocation(glm::vec3 const& location);
+  
   void translate(glm::vec3 const& vector);
   void rotate(float const& angle_rad, glm::vec3 const& axis);
 
@@ -46,11 +47,12 @@ public:
   std::vector<unsigned int> getElements();
 
   // Setters
-  void setVertices(std::vector<glm::vec3> vertices);
-  void setNormals(std::vector<glm::vec3> normals);
-  void setElements(std::vector<unsigned int> elements);
+  void setVertices(std::vector<glm::vec3> const& vertices);
+  void setNormals(std::vector<glm::vec3> const& normals);
+  void setElements(std::vector<unsigned int> const& elements);
   void setShaders(const char* vertex, const char* fragment);
-  
+  void setUvs(std::vector<glm::vec2> const& uvs);
+  void addTexture(Texture const& texture);
     
 
 protected:
@@ -58,15 +60,16 @@ protected:
   void createBuffers();
 
   std::vector<glm::vec3> _vertex_bag, _vertices, _normals;
+  std::vector<glm::vec2> _uvs;
   std::vector<unsigned int> _elements;
-  GLuint _program_id;
-  GLuint _vbo, _nbo, _ebo;
+  std::vector<Texture> _textures;
+ 
+  GLuint _vbo, _nbo, _ebo, _ubo, _program_id;
   Shader *_shader;
   aiMesh *_parent_node;
 
   glm::mat4 _model;
-  glm::vec3 _location;
-  glm::vec3 _ambient;
+  glm::vec3 _location, _ambient;
 
 };
 

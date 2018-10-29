@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Mesh::Mesh() : _shader(0), _parent_node(0) { 
+Mesh::Mesh() : _shader(0), _parent_node(0)  { 
 
   this->_model = glm::mat4(1.0f);
   this->createBuffers();
@@ -35,9 +35,13 @@ void Mesh::createBuffers() {
   glCreateBuffers(1, &_vbo);
   glCreateBuffers(1, &_nbo);
   glCreateBuffers(1, &_ebo);
+  glCreateBuffers(1, &_ubo);
 
 }
 
+/**
+ * After the geometry is created, the initBufferData method must be called.
+ */
 void Mesh::createGeometry() {}
 
 
@@ -52,6 +56,7 @@ void Mesh::translate(glm::vec3 const& vector) {
 
   this->_model = glm::translate(this->_model, vector);
 }
+
 
 void Mesh::rotate(float const& angle_rad, glm::vec3 const& axis) {
 
@@ -82,6 +87,7 @@ void Mesh::render(glm::mat4 const &VP, int tick, glm::vec3 const& camera_locatio
 
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
+  glEnableVertexAttribArray(2);
 
   glBindBuffer(GL_ARRAY_BUFFER, _vbo);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
@@ -89,6 +95,13 @@ void Mesh::render(glm::mat4 const &VP, int tick, glm::vec3 const& camera_locatio
   glBindBuffer(GL_ARRAY_BUFFER, _nbo);
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
+   glBindBuffer(GL_ARRAY_BUFFER, _ubo);
+   glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+  if (this->_textures.size() > 0) {
+    glBindTexture(GL_TEXTURE_2D, this->_textures.at(0).getTextureID());
+  }
+  
   if (draw_elements) {
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
@@ -100,10 +113,9 @@ void Mesh::render(glm::mat4 const &VP, int tick, glm::vec3 const& camera_locatio
 
   }
 
-  
-
   glDisableVertexAttribArray(0);
   glDisableVertexAttribArray(1);
+  glDisableVertexAttribArray(2);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glUseProgram(0);
 
@@ -118,16 +130,17 @@ vector<unsigned int> Mesh::getElements() {
   return this->_elements;
 }
 
-void Mesh::setVertices(std::vector<glm::vec3> vertices) {
+void Mesh::setVertices(std::vector<glm::vec3> const& vertices) {
   this->_vertices = vertices;
 }
 
-void Mesh::setNormals(std::vector<glm::vec3> normals) {
+void Mesh::setNormals(std::vector<glm::vec3> const& normals) {
   this->_normals = normals;
 }
 
-void Mesh::setElements(std::vector<unsigned int> elements) {
- 
+void Mesh::setElements(std::vector<unsigned int> const& elements) {
+
+  cout << elements.size() << endl;
   this->_elements = elements;
  
 }
@@ -140,6 +153,14 @@ void Mesh::setShaders(const char *vertex, const char* fragment) {
   this->_program_id = this->_shader->getProgramID();
 }
 
+void Mesh::setUvs(vector<glm::vec2> const& uvs) {
+  this->_uvs = uvs;
+}
+
+void Mesh::addTexture(Texture const& texture) {
+  this->_textures.push_back(texture);
+}
+
 void Mesh::initBufferData() {
 
   glBindBuffer(GL_ARRAY_BUFFER, _vbo);
@@ -148,7 +169,11 @@ void Mesh::initBufferData() {
   glBindBuffer(GL_ARRAY_BUFFER, _nbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->_normals.size() * 3, reinterpret_cast<GLfloat*>(this->_normals.data()), GL_STATIC_DRAW);
 
+  glBindBuffer(GL_ARRAY_BUFFER, _ubo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->_uvs.size() * 3, reinterpret_cast<GLfloat*>(this->_uvs.data()), GL_STATIC_DRAW);
+
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * this->_elements.size(), reinterpret_cast<GLfloat*>(this->_elements.data()), GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * this->_elements.size(), &this->_elements[0], GL_STATIC_DRAW);
+
 }
 
