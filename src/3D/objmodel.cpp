@@ -21,14 +21,13 @@ ObjModel::~ObjModel() {
 
 void ObjModel::createGeometry() {
 
-  
   this->setVertices(this->_obj_loader->getVertices());
   this->setNormals(this->_obj_loader->getNormals());
   this->setElements(this->_obj_loader->getElements());
   this->setUvs(this->_obj_loader->getUvs());
-  
-  this->initBufferData();
 
   this->setShaders("shaders/cube.vert.glsl", "shaders/cube.frag.glsl");
+  
+  this->initBufferData();
 
 }

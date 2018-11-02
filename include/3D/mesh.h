@@ -1,4 +1,4 @@
- #ifndef MESH_H
+#ifndef MESH_H
 #define MESH_H
 
 #include <GL/glew.h>
@@ -39,8 +39,11 @@ public:
   void setAmbient(glm::vec3 const& ambient);
 
   // Rendering
-  virtual void render(glm::mat4 const &VP, int tick, glm::vec3 const& camera_location, bool draw_elements = true);
-  virtual void initBufferData();
+  virtual void render(glm::mat4 const &VP, int tick,
+		      glm::vec3 const& camera_location,
+		      bool draw_elements = true);
+  
+  void initBufferData();
 
   // Getters
   std::vector<glm::vec3> getVertices();

@@ -4,6 +4,9 @@ using namespace std;
 
 ObjLoader::ObjLoader(const char *obj_file_path) {
 
+  // We push a "null" vertices to fit the opengl indexing scheme (starting at 1 instead of 0)
+  this->_vertices.push_back(glm::vec3(0,0,0));
+  
   this->_obj_file.open(obj_file_path);
 
   if (!this->_obj_file.is_open()) {
@@ -45,7 +48,7 @@ ObjLoader::ObjLoader(const char *obj_file_path) {
 
     }
 
-    // NORMAL --------------------------------------------------------------
+    // NORMAL INDICES ---------------------------------------------------------
     if (current.at(0) == 'v' && current.at(1) == 'n') {
 
       glm::vec3 temp;
@@ -61,7 +64,7 @@ ObjLoader::ObjLoader(const char *obj_file_path) {
 
       }
 
-      this->_normals.push_back(temp);	
+      this->_normals_bag.push_back(temp);	
 
     }
 
@@ -73,9 +76,13 @@ ObjLoader::ObjLoader(const char *obj_file_path) {
 	string value;
 	ss >> value;
 
-	string part_that_interests_us = value.substr(0, value.find_first_of('/')); 
+	string vertex_index_string = value.substr(0, value.find_first_of('/')); 
+	string normal_index_string = value.substr(value.find_last_of('/') + 1, value.size());
 
-	this->_elements.push_back((unsigned int)stoi(part_that_interests_us));
+	int normal_index = stoi(normal_index_string);
+
+	this->_normals_indices.push_back(normal_index);
+	this->_elements.push_back((unsigned int)stoi(vertex_index_string));
 	
       }
 
@@ -101,6 +108,10 @@ ObjLoader::ObjLoader(const char *obj_file_path) {
     }
     
   } // End while getline ------------------------------------------------------
+
+  // NORMALS
+  cout << this->_elements.size() << endl;
+  cout << this->_vertices.size() << endl;
 
 }
 

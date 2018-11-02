@@ -95,8 +95,8 @@ void Mesh::render(glm::mat4 const &VP, int tick, glm::vec3 const& camera_locatio
   glBindBuffer(GL_ARRAY_BUFFER, _nbo);
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-   glBindBuffer(GL_ARRAY_BUFFER, _ubo);
-   glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  glBindBuffer(GL_ARRAY_BUFFER, _ubo);
+  glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
   if (this->_textures.size() > 0) {
     glBindTexture(GL_TEXTURE_2D, this->_textures.at(0).getTextureID());
@@ -105,7 +105,7 @@ void Mesh::render(glm::mat4 const &VP, int tick, glm::vec3 const& camera_locatio
   if (draw_elements) {
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-    glDrawElements(GL_TRIANGLES, this->_elements.size() * 3, GL_UNSIGNED_INT, (void*)0);
+    glDrawElements(GL_TRIANGLES, this->_elements.size(), GL_UNSIGNED_INT, (void*)0);
     
   } else {
     
@@ -116,7 +116,7 @@ void Mesh::render(glm::mat4 const &VP, int tick, glm::vec3 const& camera_locatio
   glDisableVertexAttribArray(0);
   glDisableVertexAttribArray(1);
   glDisableVertexAttribArray(2);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   glUseProgram(0);
 
 
@@ -140,7 +140,6 @@ void Mesh::setNormals(std::vector<glm::vec3> const& normals) {
 
 void Mesh::setElements(std::vector<unsigned int> const& elements) {
 
-  cout << elements.size() << endl;
   this->_elements = elements;
  
 }
@@ -164,16 +163,16 @@ void Mesh::addTexture(Texture const& texture) {
 void Mesh::initBufferData() {
 
   glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->_vertices.size() * 3, reinterpret_cast<GLfloat*>(this->_vertices.data()), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->_vertices.size() * 3, this->_vertices.data(), GL_STATIC_DRAW);
 
   glBindBuffer(GL_ARRAY_BUFFER, _nbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->_normals.size() * 3, reinterpret_cast<GLfloat*>(this->_normals.data()), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->_normals.size() * 3, this->_normals.data(), GL_STATIC_DRAW);
 
   glBindBuffer(GL_ARRAY_BUFFER, _ubo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->_uvs.size() * 3, reinterpret_cast<GLfloat*>(this->_uvs.data()), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->_uvs.size() * 2, this->_uvs.data(), GL_STATIC_DRAW);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * this->_elements.size(), &this->_elements[0], GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * this->_elements.size(), this->_elements.data(), GL_STATIC_DRAW);
 
 }
 

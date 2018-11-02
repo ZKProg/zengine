@@ -92,7 +92,6 @@ bool GLContext::initGL() {
   // DECLARE ASSETS (MESHES) HERE
 
   ObjModel *cube = new ObjModel("models/cube.obj");
-  cout << "Cube = " << &cube << endl;
   this->_meshes->push_back(cube);
 
   
@@ -116,8 +115,7 @@ void GLContext::paintGL() {
     // Render all assets
     for (int i = 0; i < _meshes->size(); i++) 
       _meshes->at(i)->render(_VP, SDL_GetTicks(), this->_camera_location, true);
-    
-        
+
   } catch (exception e) {
     cout << "Error render assets: " << e.what() << endl;
   }

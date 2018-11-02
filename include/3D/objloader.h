@@ -25,9 +25,9 @@ protected:
 
   std::ifstream _obj_file;
   std::vector<glm::vec3> _vertices;
-  std::vector<glm::vec3> _normals;
+  std::vector<glm::vec3> _normals, _normals_bag;
   std::vector<glm::vec2> _uvs;
-  std::vector<unsigned int> _elements;
+  std::vector<unsigned int> _elements, _normals_indices;
   std::string _content;
   
 };
