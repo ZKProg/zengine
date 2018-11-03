@@ -5,7 +5,8 @@ using namespace std;
 ObjLoader::ObjLoader(const char *obj_file_path) {
 
   // We push a "null" vertices to fit the opengl indexing scheme (starting at 1 instead of 0)
-  this->_vertices.push_back(glm::vec3(0,0,0));
+  // this->_vertices.push_back(glm::vec3(0,0,0));
+  //this->_normals.push_back(glm::vec3(0,0,0));
   
   this->_obj_file.open(obj_file_path);
 
@@ -48,7 +49,7 @@ ObjLoader::ObjLoader(const char *obj_file_path) {
 
     }
 
-    // NORMAL INDICES ---------------------------------------------------------
+    // NORMALS BAG ---------------------------------------------------------
     if (current.at(0) == 'v' && current.at(1) == 'n') {
 
       glm::vec3 temp;
@@ -79,11 +80,17 @@ ObjLoader::ObjLoader(const char *obj_file_path) {
 	string vertex_index_string = value.substr(0, value.find_first_of('/')); 
 	string normal_index_string = value.substr(value.find_last_of('/') + 1, value.size());
 
-	int normal_index = stoi(normal_index_string);
+	int normal_index = stoi(normal_index_string) - 1;
 
-	this->_normals_indices.push_back(normal_index);
-	this->_elements.push_back((unsigned int)stoi(vertex_index_string));
-	
+	this->_elements.push_back((unsigned int)stoi(vertex_index_string) - 1);
+
+	try {
+	  this->_normals.push_back(this->_normals_bag.at(normal_index));
+	} catch (exception e) {
+	  cout << "Index before error: " << normal_index << endl;
+	  cout << "Error: " << e.what() << endl;
+	  exit(-1);
+	}
       }
 
     }
@@ -110,8 +117,16 @@ ObjLoader::ObjLoader(const char *obj_file_path) {
   } // End while getline ------------------------------------------------------
 
   // NORMALS
-  cout << this->_elements.size() << endl;
-  cout << this->_vertices.size() << endl;
+
+  for (int i = 0; i < this->_elements.size(); i++) {
+    cout << i << "_______________________________________" << endl;
+    this->displayVector(this->_vertices.at(this->_elements.at(i)));
+    cout << "has normal: "; this->displayVector(this->_normals.at(this->_elements.at(i)));
+  }
+
+  // for (int i = 0; i < this->_normals.size(); i++)
+  //   this->displayVector(this->_normals.at(i));
+
 
 }
 
@@ -137,3 +152,7 @@ vector<unsigned int> ObjLoader::getElements() {
 vector<glm::vec2> ObjLoader::getUvs() {
   return this->_uvs;
 }
+
+ void ObjLoader::displayVector(const glm::vec3 &vector) {
+   cout << vector.x << ":" << vector.y << ":" << vector.z << endl;
+ }

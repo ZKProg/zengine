@@ -21,6 +21,8 @@ public:
   std::vector<unsigned int> getElements();
   std::vector<glm::vec2> getUvs();
 
+  void displayVector(glm::vec3 const& vector);
+  
 protected:
 
   std::ifstream _obj_file;
