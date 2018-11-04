@@ -32,10 +32,10 @@ Mesh::~Mesh() {
 
 void Mesh::createBuffers() {
 
-  glCreateBuffers(1, &_vbo);
-  glCreateBuffers(1, &_nbo);
-  glCreateBuffers(1, &_ebo);
-  glCreateBuffers(1, &_ubo);
+  glGenBuffers(1, &_vbo);
+  glGenBuffers(1, &_nbo);
+  glGenBuffers(1, &_ebo);
+  glGenBuffers(1, &_ubo);
 
 }
 
